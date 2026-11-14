@@ -8,6 +8,7 @@
   <a href="https://talkytalky.im/download.html?utm_source=github&utm_medium=readme&utm_campaign=talky_ios">Downloads</a> ·
   <a href="https://github.com/mailes/talky-android">Android source</a> ·
   <a href="docs/BUILDING.md">Build from source</a> ·
+  <a href="https://github.com/mailes/talky-desktop">Desktop source</a> ·
   <a href="README.zh-CN.md">简体中文</a>
 </p>
 

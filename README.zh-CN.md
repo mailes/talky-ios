@@ -2,7 +2,7 @@
 
 **聊天、群组，以及对话里的个人 AI 助手 Jarvis。**
 
-[官网](https://talkytalky.im/zh/?utm_source=github&utm_medium=readme&utm_campaign=talky_ios) · [下载](https://talkytalky.im/zh/download.html?utm_source=github&utm_medium=readme&utm_campaign=talky_ios) · [构建说明](docs/BUILDING.md) · [Android 源码](https://github.com/mailes/talky-android) · [English](README.md)
+[官网](https://talkytalky.im/zh/?utm_source=github&utm_medium=readme&utm_campaign=talky_ios) · [下载](https://talkytalky.im/zh/download.html?utm_source=github&utm_medium=readme&utm_campaign=talky_ios) · [构建说明](docs/BUILDING.md) · [Android 源码](https://github.com/mailes/talky-android) · [桌面端源码](https://github.com/mailes/talky-desktop) · [English](README.md)
 
 这是 Talky 的 iPhone / iPad 客户端源码，基于 Telegram-iOS 和 gramsrv 兼容分支开发。包含消息、群组、媒体分享、语音与视频通话、主题，以及聊天中的 Jarvis 助手入口。Jarvis 可提供问答、经授权的聊天摘要、记忆与提醒，具体可用性取决于服务配置和订阅。
 
