@@ -1,0 +1,86 @@
+[
+  {
+    "path": "build-system/bazel-rules/apple_support",
+    "sha": "872de7149cfbcaaf854c7867e98b6d4798ba0d27",
+    "url": "https://github.com/bazelbuild/apple_support",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "build-system/bazel-rules/rules_apple",
+    "sha": "485016eb5b0948cc17307064e7977a6d68e94046",
+    "url": "https://github.com/ali-fareed/rules_apple",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "build-system/bazel-rules/rules_swift",
+    "sha": "dd10a2497a691237eb9716586acee1a9c4fe3e59",
+    "url": "https://github.com/bazelbuild/rules_swift",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "build-system/bazel-rules/rules_xcodeproj",
+    "sha": "f6a54168d19f917d0630e7d4efa8f2f9fa0ddc36",
+    "url": "https://github.com/MobileNativeFoundation/rules_xcodeproj",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "submodules/TgVoipWebrtc/tgcalls",
+    "sha": "c1de0882de9013df246252129b95430f48b20eec",
+    "url": "https://github.com/TelegramMessenger/tgcalls",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "submodules/tlottie/tlottie",
+    "sha": "92df98dc209bc39b1e567ec74a8c86a0af5239de",
+    "url": "https://github.com/dkaraush/tlottie",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "third-party/dav1d/dav1d",
+    "sha": "330e20672e85f9de1678dccd6957845898ef57a1",
+    "url": "https://github.com/ali-fareed/dav1d",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "third-party/libvpx/libvpx",
+    "sha": "e7bfd8b6c230a6824e7fd1efa2378a7322986128",
+    "url": "https://github.com/webmproject/libvpx",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "third-party/mtproto-engine",
+    "sha": "da4b2170210aab0430c4ff18c032991f3030cf45",
+    "url": "https://github.com/TelegramMessenger/mtproto-engine",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "third-party/td/td",
+    "sha": "e894536b2f46caad93f997448d2daff9431b19dd",
+    "url": "https://github.com/tdlib/td",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "third-party/wallet-engine/wallet-engine",
+    "sha": "e59e0d89d7ee90c388bf36e3334c5b276f396697",
+    "url": "https://github.com/i582/wallet-engine",
+    "public_commit_accessible": true,
+    "repository_public": true
+  },
+  {
+    "path": "third-party/webrtc/webrtc",
+    "sha": "590a8b23dd8ee1b747217645f300cb2a8bb26f30",
+    "url": "https://github.com/ali-fareed/webrtc",
+    "public_commit_accessible": true,
+    "repository_public": true
+  }
+]

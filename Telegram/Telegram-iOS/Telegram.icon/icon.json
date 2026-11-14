@@ -1,0 +1,21 @@
+{
+  "fill": "system-light",
+  "groups": [
+    {
+      "blend-mode": "normal",
+      "blur-material": 0,
+      "layers": [
+        {
+          "image-name": "Logo.png",
+          "name": "Logo"
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "circles": [
+      "watchOS"
+    ],
+    "squares": "shared"
+  }
+}

@@ -1,0 +1,22 @@
+name: Bug report
+description: Report a reproducible problem in the Talky iOS client.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, private conversations or verification codes. Use private vulnerability reporting for security issues.
+  - type: input
+    id: environment
+    attributes:
+      label: Device and iOS version
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps and expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or redacted logs
