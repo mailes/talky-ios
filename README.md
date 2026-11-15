@@ -68,7 +68,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Small doc
 Telegram identifies Telegram for iOS as **GNU GPL version 2 or later**; this derivative retains that licensing basis. See [LICENSE](LICENSE), [NOTICE.md](NOTICE.md), and the individual licenses of bundled dependencies. Original copyright and attribution notices remain in the source. This project is independent of Telegram and is not an official Telegram application.
 
 - [Telegram-iOS](https://github.com/TelegramMessenger/Telegram-iOS)
-- [gramsrv-compatible iOS fork](https://github.com/iamxvbaba/gramsrv-Telegram-iOS)
 - The maintainers of the third-party projects and submodules included here.
 
 Learn more about Talky at **[talkytalky.im](https://talkytalky.im/?utm_source=github&utm_medium=readme&utm_campaign=talky_ios)**.
