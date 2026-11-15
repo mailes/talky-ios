@@ -1355,6 +1355,25 @@ public final class Network: NSObject {
         }
     }
     
+    @available(iOS 13.0, macOS 10.15, *)
+    public func jarvisSessionTicket(userId: Int64) -> Signal<String?, NoError> {
+        let mtContext = self.context
+        let datacenterId = self.datacenterId
+        return Signal { subscriber in
+            MTContext.contextQueue().dispatch(onQueue: {
+                var ticket: String?
+                if let authInfo = mtContext.authInfoForDatacenter(withId: datacenterId, selector: .persistent) {
+                    ticket = JarvisSessionTicket.make(authKey: authInfo.authKey,
+                        authKeyId: UInt64(bitPattern: authInfo.authKeyId), userId: userId,
+                        expires: Int64(mtContext.globalTime()) + 60)
+                }
+                subscriber.putNext(ticket)
+                subscriber.putCompletion()
+            })
+            return EmptyDisposable
+        }
+    }
+
     public func getAuthKeyId() -> Signal<Int64, NoError> {
         let mtContext = self.context
         let datacenterId = self.datacenterId
