@@ -149,6 +149,7 @@ typedef enum {
     SVariable *_alternativeLocalization;
     NSDictionary<NSString *, NSString *> *_englishStrings;
     
+    UIImageView *_brandLogoView;
     UIView *_wrapperView;
     UIView *_startButton;
     
@@ -311,7 +312,7 @@ typedef enum {
     _startButton.alpha = 0.0;
     
     [UIView animateWithDuration:0.3 delay:0.15 options:kNilOptions animations:^{
-        _glkView.alpha = 1.0;
+        _glkView.alpha = 1.0 - _brandLogoView.alpha;
         _pageScrollView.alpha = 1.0;
         _pageControl.alpha = 1.0;
         _startButton.alpha = 1.0;
@@ -350,7 +351,8 @@ typedef enum {
         _glkView.delegate = self;
         
         [self setupGL];
-        [self.view addSubview:_glkView];
+        [self.view insertSubview:_glkView atIndex:0];
+        _glkView.alpha = _brandLogoView == nil ? 0.0 : 1.0 - _brandLogoView.alpha;
         
         [self startTimer];
         _isOpenGLLoaded = true;
@@ -394,6 +396,13 @@ typedef enum {
         return;
     }
     _loadedView = true;
+
+    // A UIKit logo also renders on arm64 simulators, where the GL tour is disabled.
+    _brandLogoView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"talky_intro.png"]];
+    _brandLogoView.contentMode = UIViewContentModeScaleAspectFit;
+    _brandLogoView.clipsToBounds = true;
+    _brandLogoView.userInteractionEnabled = false;
+    _brandLogoView.isAccessibilityElement = false;
     
     self.view.backgroundColor = _backgroundColor;
     
@@ -426,6 +435,7 @@ typedef enum {
     }
     [_pageScrollView setPage:0];
     
+    [self.view addSubview:_brandLogoView];
     [self.view addSubview:_alternativeLanguageButton];
     
     RMIntroPageControl *pageControl = [[RMIntroPageControl alloc] init];
@@ -446,6 +456,11 @@ typedef enum {
 }
 
 - (UIView *)createAnimationSnapshot {
+    if (_brandLogoView.alpha > 0.0) {
+        UIView *snapshot = [_brandLogoView snapshotViewAfterScreenUpdates:false];
+        snapshot.frame = _brandLogoView.frame;
+        return snapshot;
+    }
     UIImage *image = _glkView.snapshot;
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:_glkView.frame];
     imageView.image = image;
@@ -607,6 +622,14 @@ typedef enum {
     
     _pageControl.frame = CGRectMake(0, pageControlY, self.view.bounds.size.width, 7);
     _glkView.frame = CGRectChangedOriginY(_glkView.frame, glViewY - statusBarHeight);
+    CGFloat logoScale = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) ? 1.2 : 1.0;
+    CGFloat logoSize = 148.0 * logoScale;
+    _brandLogoView.frame = CGRectMake((self.view.bounds.size.width - logoSize) / 2.0,
+        glViewY - statusBarHeight + 26.0 * logoScale, logoSize, logoSize);
+    _brandLogoView.layer.cornerRadius = logoSize * 0.23;
+    CGFloat firstPageProgress = MAX(0.0, MIN(1.0, _pageScrollView.contentOffset.x / MAX(1.0, _pageScrollView.bounds.size.width)));
+    _brandLogoView.alpha = 1.0 - firstPageProgress;
+    _glkView.alpha = firstPageProgress;
     
     CGFloat startButtonWidth = MIN(430.0 - 48.0, self.view.bounds.size.width - 48.0f);
     UIView *startButton = self.createStartButton(startButtonWidth);
@@ -721,6 +744,9 @@ NSInteger _current_page_end;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    CGFloat firstPageProgress = MAX(0.0, MIN(1.0, scrollView.contentOffset.x / MAX(1.0, scrollView.bounds.size.width)));
+    _brandLogoView.alpha = 1.0 - firstPageProgress;
+    _glkView.alpha = firstPageProgress;
     CGFloat offset = (scrollView.contentOffset.x - _currentPage * scrollView.frame.size.width) / self.view.frame.size.width;
     
     set_scroll_offset((float)offset);
