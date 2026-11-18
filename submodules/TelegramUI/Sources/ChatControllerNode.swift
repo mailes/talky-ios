@@ -54,6 +54,7 @@ import GlassBackgroundComponent
 import ChatThemeScreen
 import ChatTextInputPanelNode
 import ChatInputAccessoryPanel
+import SettingsUI
 import ChatMessageTextBubbleContentNode
 import ChatMessagePollBubbleContentNode
 import HeaderPanelContainerComponent
@@ -5159,6 +5160,45 @@ class ChatControllerNode: ASDisplayNode, ASScrollViewDelegate {
 
     func sendCurrentMessage(silentPosting: Bool? = nil, scheduleTime: Int32? = nil, repeatPeriod: Int32? = nil, postpone: Bool = false, messageEffect: ChatSendMessageEffect? = nil, sendWithoutFormatting: Bool = false, completion: @escaping () -> Void = {}) {
         guard let textInputPanelNode = self.inputPanelNode as? ChatTextInputPanelNode else {
+            return
+        }
+        // /setkey in the @jarvis private chat opens the native key settings.
+        // It is never sent: a key typed after the command would otherwise stay
+        // in the chat history. This covers both the command-menu selection and
+        // a manually typed command because both reach this send path.
+        if let peerId = self.chatPresentationInterfaceState.chatLocation.peerId,
+           peerId.namespace == Namespaces.Peer.CloudUser,
+           peerId.id._internalGetInt64Value() == jarvisBotUserId,
+           JarvisCommandText.isSetKeyCommand(textInputPanelNode.inputTextState.inputText.string) {
+            self.controller?.push(jarvisSettingsController(context: self.context, focus: .keys))
+            self.controller?.updateChatPresentationInterfaceState(animated: true, interactive: false, { state in
+                state.updatedInterfaceState { $0.withUpdatedComposeInputState(ChatTextInputState(inputText: NSAttributedString(string: ""))) }
+            })
+            return
+        }
+        // /ask in a group or channel opens the local answer for that chat.
+        // The command is not sent: the excerpts and answer stay between the
+        // device and the user, and only server-issued source IDs are clickable.
+        if let peerId = self.chatPresentationInterfaceState.chatLocation.peerId,
+           peerId.namespace == Namespaces.Peer.CloudChannel,
+           let question = JarvisCommandText.askQuestion(textInputPanelNode.inputTextState.inputText.string) {
+            let peerTitle = self.chatPresentationInterfaceState.renderedPeer?.peer.map { EnginePeer($0).compactDisplayTitle } ?? "this chat"
+            let ask = jarvisAskController(context: self.context, peerId: peerId.id._internalGetInt64Value(), peerTitle: peerTitle, question: question, wallpaper: self.chatPresentationInterfaceState.chatWallpaper, openSource: { [weak self] messageId in
+                guard let self else {
+                    return
+                }
+                let id = MessageId(peerId: peerId, namespace: Namespaces.Message.Cloud, id: Int32(messageId))
+                self.controller?.navigateToMessage(messageLocation: .id(id, NavigateToMessageParams()), animated: true, forceInCurrentChat: true)
+            }, openSettings: { [weak self] in
+                guard let self else {
+                    return
+                }
+                self.controller?.push(jarvisSettingsController(context: self.context, focus: .keys))
+            })
+            self.controller?.push(ask)
+            self.controller?.updateChatPresentationInterfaceState(animated: true, interactive: false, { state in
+                state.updatedInterfaceState { $0.withUpdatedComposeInputState(ChatTextInputState(inputText: NSAttributedString(string: ""))) }
+            })
             return
         }
         self.historyNode.justSentTextMessage = true
