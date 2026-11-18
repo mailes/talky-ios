@@ -16,6 +16,7 @@ import WebUI
 import AvatarNode
 import PeerNameColorItem
 import BoostLevelIconComponent
+import SettingsUI
 
 private let enabledPublicBioEntities: EnabledEntityTypes = [.allUrl, .mention, .hashtag]
 private let enabledPrivateBioEntities: EnabledEntityTypes = [.internalUrl, .mention, .hashtag]
@@ -131,6 +132,7 @@ func infoItems(
         let ItemAgentInfo = 9100
         let ItemAgentAddProvider = 9101
         let ItemAgentProvidersInfo = 9102
+        let ItemJarvisSettings = 9200
         let ItemCommunity = 10000
         
         if let cachedUserData = data.cachedData as? CachedUserData, cachedUserData.flags.contains(.unofficialSecurityRisk) {
@@ -570,6 +572,16 @@ func infoItems(
                 if let botInfo = user.botInfo, botInfo.flags.contains(.canEdit) {
                     items[currentPeerInfoSection]!.append(PeerInfoScreenDisclosureItem(id: ItemBotSettings, label: .none, text: presentationData.strings.Bot_Settings, icon: PresentationResourcesSettings.settings, action: {
                         interaction.openEditing()
+                    }))
+                }
+                
+                if user.id.id._internalGetInt64Value() == jarvisBotUserId {
+                    let title = presentationData.strings.baseLanguageCode.hasPrefix("zh") ? "Jarvis 设置" : "Jarvis Settings"
+                    items[currentPeerInfoSection]!.append(PeerInfoScreenDisclosureItem(id: ItemJarvisSettings, label: .none, text: title, icon: PresentationResourcesSettings.settings, action: {
+                        guard let controller = interaction.getController() else {
+                            return
+                        }
+                        controller.push(jarvisSettingsController(context: context))
                     }))
                 }
                 
