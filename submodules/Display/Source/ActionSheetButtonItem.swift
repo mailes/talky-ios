@@ -15,13 +15,15 @@ public enum ActionSheetButtonFont {
 
 public class ActionSheetButtonItem: ActionSheetItem {
     public let title: String
+    public let subtitle: String?
     public let color: ActionSheetButtonColor
     public let font: ActionSheetButtonFont
     public let enabled: Bool
     public let action: () -> Void
-    
-    public init(title: String, color: ActionSheetButtonColor = .accent, font: ActionSheetButtonFont = .default, enabled: Bool = true, action: @escaping () -> Void) {
+
+    public init(title: String, subtitle: String? = nil, color: ActionSheetButtonColor = .accent, font: ActionSheetButtonFont = .default, enabled: Bool = true, action: @escaping () -> Void) {
         self.title = title
+        self.subtitle = subtitle
         self.color = color
         self.font = font
         self.enabled = enabled
@@ -55,6 +57,7 @@ public class ActionSheetButtonNode: ActionSheetItemNode {
     
     private let button: HighlightTrackingButton
     private let label: ImmediateTextNode
+    private let subtitleLabel: ImmediateTextNode
     private let accessibilityArea: AccessibilityAreaNode
     
     private var pointerInteraction: PointerInteraction?
@@ -73,7 +76,14 @@ public class ActionSheetButtonNode: ActionSheetItemNode {
         self.label.maximumNumberOfLines = 1
         self.label.displaysAsynchronously = false
         self.label.truncationType = .end
-        
+
+        self.subtitleLabel = ImmediateTextNode()
+        self.subtitleLabel.isUserInteractionEnabled = false
+        self.subtitleLabel.isAccessibilityElement = false
+        self.subtitleLabel.maximumNumberOfLines = 2
+        self.subtitleLabel.displaysAsynchronously = false
+        self.subtitleLabel.truncationType = .end
+
         self.accessibilityArea = AccessibilityAreaNode()
         
         super.init(theme: theme)
@@ -86,7 +96,8 @@ public class ActionSheetButtonNode: ActionSheetItemNode {
         
         self.label.isUserInteractionEnabled = false
         self.addSubnode(self.label)
-        
+        self.addSubnode(self.subtitleLabel)
+
         self.addSubnode(self.accessibilityArea)
         
         self.button.highligthedChanged = { [weak self] highlighted in
@@ -156,10 +167,18 @@ public class ActionSheetButtonNode: ActionSheetItemNode {
         }
         self.label.attributedText = NSAttributedString(string: item.title, font: textFont, textColor: textColor)
         self.label.isAccessibilityElement = false
-        
+
+        if let subtitle = item.subtitle, !subtitle.isEmpty {
+            self.subtitleLabel.attributedText = NSAttributedString(string: subtitle, font: Font.regular(floor(self.theme.baseFontSize * 14.0 / 17.0)), textColor: self.theme.secondaryTextColor)
+            self.subtitleLabel.isHidden = false
+            self.accessibilityArea.accessibilityLabel = "\(item.title), \(subtitle)"
+        } else {
+            self.subtitleLabel.attributedText = nil
+            self.subtitleLabel.isHidden = true
+            self.accessibilityArea.accessibilityLabel = item.title
+        }
+
         self.button.isEnabled = item.enabled
-        
-        self.accessibilityArea.accessibilityLabel = item.title
         
         var accessibilityTraits: UIAccessibilityTraits = [.button]
         if !item.enabled {
@@ -169,14 +188,29 @@ public class ActionSheetButtonNode: ActionSheetItemNode {
     }
     
     public override func updateLayout(constrainedSize: CGSize, transition: ContainedViewLayoutTransition) -> CGSize {
-        let size = CGSize(width: constrainedSize.width, height: 57.0)
-        
+        let maxTextWidth = max(1.0, constrainedSize.width - 20.0)
+        let labelSize = self.label.updateLayout(CGSize(width: maxTextWidth, height: .greatestFiniteMagnitude))
+        let hasSubtitle = !self.subtitleLabel.isHidden && self.subtitleLabel.attributedText != nil
+        var subtitleSize = CGSize()
+        if hasSubtitle {
+            subtitleSize = self.subtitleLabel.updateLayout(CGSize(width: maxTextWidth, height: .greatestFiniteMagnitude))
+        }
+        let contentHeight = labelSize.height + (hasSubtitle ? subtitleSize.height + 2.0 : 0.0)
+        let size = CGSize(width: constrainedSize.width, height: max(57.0, ceil(contentHeight) + 20.0))
+
         self.button.frame = CGRect(origin: CGPoint(), size: size)
-        
-        let labelSize = self.label.updateLayout(CGSize(width: max(1.0, size.width - 10.0), height: size.height))
-        self.label.frame = CGRect(origin: CGPoint(x: floorToScreenPixels((size.width - labelSize.width) / 2.0), y: floorToScreenPixels((size.height - labelSize.height) / 2.0)), size: labelSize)
+
+        if hasSubtitle {
+            let totalHeight = labelSize.height + 2.0 + subtitleSize.height
+            let top = floorToScreenPixels((size.height - totalHeight) / 2.0)
+            self.label.frame = CGRect(origin: CGPoint(x: floorToScreenPixels((size.width - labelSize.width) / 2.0), y: top), size: labelSize)
+            self.subtitleLabel.frame = CGRect(origin: CGPoint(x: floorToScreenPixels((size.width - subtitleSize.width) / 2.0), y: top + labelSize.height + 2.0), size: subtitleSize)
+        } else {
+            self.label.frame = CGRect(origin: CGPoint(x: floorToScreenPixels((size.width - labelSize.width) / 2.0), y: floorToScreenPixels((size.height - labelSize.height) / 2.0)), size: labelSize)
+            self.subtitleLabel.frame = CGRect()
+        }
         self.accessibilityArea.frame = CGRect(origin: CGPoint(), size: size)
-        
+
         self.updateInternalLayout(size, constrainedSize: constrainedSize)
         return size
     }
