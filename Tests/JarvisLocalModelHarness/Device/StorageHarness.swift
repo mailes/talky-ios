@@ -43,6 +43,21 @@ final class StorageSceneDelegate: UIResponder, UIWindowSceneDelegate {
             stage = "update"
             try first.save(replacement)
             guard let updated = try first.load(), updated.provider == .deepseek else { fatalError("Keychain update failed") }
+            stage = "custom round trip"
+            let custom = try JarvisLocalCredential(provider: .custom, format: .anthropic,
+                                                   baseUrl: "https://gateway.example/v1",
+                                                   models: ["model-a", "model-b"], model: "model-b",
+                                                   key: "synthetic-custom")
+            try first.save(custom)
+            guard let reloaded = try first.load(),
+                  reloaded.provider == .custom,
+                  reloaded.format == .anthropic,
+                  reloaded.baseUrl == "https://gateway.example/v1",
+                  reloaded.models == ["model-a", "model-b"],
+                  reloaded.model == "model-b",
+                  reloaded.endpoint.absoluteString == "https://gateway.example/v1/messages" else {
+                fatalError("Keychain custom credential mismatch")
+            }
             try first.delete()
             guard try first.load() == nil else { fatalError("Keychain deletion failed") }
             try first.delete()

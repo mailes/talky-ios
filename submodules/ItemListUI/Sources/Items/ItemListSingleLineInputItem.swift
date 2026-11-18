@@ -54,6 +54,7 @@ public class ItemListSingleLineInputItem: ListViewItem, ItemListItem {
     let label: String?
     let type: ItemListSingleLineInputItemType
     let returnKeyType: UIReturnKeyType
+    let textContentType: UITextContentType?
     let alignment: ItemListSingleLineInputAlignment
     let spacing: CGFloat
     let clearType: ItemListSingleLineInputClearType
@@ -70,7 +71,7 @@ public class ItemListSingleLineInputItem: ListViewItem, ItemListItem {
     let cleared: (() -> Void)?
     public let tag: ItemListItemTag?
     
-    public init(context: AccountContext? = nil, presentationData: ItemListPresentationData, systemStyle: ItemListSystemStyle = .legacy, title: NSAttributedString, text: String, placeholder: String, label: String? = nil, type: ItemListSingleLineInputItemType = .regular(capitalization: true, autocorrection: true), returnKeyType: UIReturnKeyType = .`default`, alignment: ItemListSingleLineInputAlignment = .default, spacing: CGFloat = 0.0, clearType: ItemListSingleLineInputClearType = .none, maxLength: Int = 0, enabled: Bool = true, selectAllOnFocus: Bool = false, secondaryStyle: Bool = false, tag: ItemListItemTag? = nil, sectionId: ItemListSectionId, textUpdated: @escaping (String) -> Void, shouldUpdateText: @escaping (String) -> Bool = { _ in return true }, processPaste: ((String) -> String)? = nil, updatedFocus: ((Bool) -> Void)? = nil, action: @escaping () -> Void, cleared: (() -> Void)? = nil) {
+    public init(context: AccountContext? = nil, presentationData: ItemListPresentationData, systemStyle: ItemListSystemStyle = .legacy, title: NSAttributedString, text: String, placeholder: String, label: String? = nil, type: ItemListSingleLineInputItemType = .regular(capitalization: true, autocorrection: true), returnKeyType: UIReturnKeyType = .`default`, textContentType: UITextContentType? = nil, alignment: ItemListSingleLineInputAlignment = .default, spacing: CGFloat = 0.0, clearType: ItemListSingleLineInputClearType = .none, maxLength: Int = 0, enabled: Bool = true, selectAllOnFocus: Bool = false, secondaryStyle: Bool = false, tag: ItemListItemTag? = nil, sectionId: ItemListSectionId, textUpdated: @escaping (String) -> Void, shouldUpdateText: @escaping (String) -> Bool = { _ in return true }, processPaste: ((String) -> String)? = nil, updatedFocus: ((Bool) -> Void)? = nil, action: @escaping () -> Void, cleared: (() -> Void)? = nil) {
         self.context = context
         self.presentationData = presentationData
         self.systemStyle = systemStyle
@@ -80,6 +81,7 @@ public class ItemListSingleLineInputItem: ListViewItem, ItemListItem {
         self.label = label
         self.type = type
         self.returnKeyType = returnKeyType
+        self.textContentType = textContentType
         self.alignment = alignment
         self.spacing = spacing
         self.clearType = clearType
@@ -387,6 +389,9 @@ public class ItemListSingleLineInputItemNode: ListViewItemNode, UITextFieldDeleg
                     }
                     if strongSelf.textNode.textField.returnKeyType != item.returnKeyType {
                         strongSelf.textNode.textField.returnKeyType = item.returnKeyType
+                    }
+                    if strongSelf.textNode.textField.textContentType != item.textContentType {
+                        strongSelf.textNode.textField.textContentType = item.textContentType
                     }
                     
                     if let currentText = strongSelf.textNode.textField.text {

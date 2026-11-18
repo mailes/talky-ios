@@ -47,5 +47,5 @@ codesign --force --sign - "$app" >/dev/null 2>&1
 xcrun simctl uninstall "$JARVIS_SIMULATOR_ID" im.talky.jarvis.storageharness >/dev/null 2>&1 || true
 xcrun simctl install "$JARVIS_SIMULATOR_ID" "$app"
 xcrun simctl launch --console "$JARVIS_SIMULATOR_ID" im.talky.jarvis.storageharness | tee "$build_dir/result.log"
-rg -q '^JARVIS_KEYCHAIN_DEVICE_TEST_PASS$' "$build_dir/result.log"
-if rg -q '^JARVIS_KEYCHAIN_DEVICE_TEST_FAIL' "$build_dir/result.log"; then exit 1; fi
+grep -q '^JARVIS_KEYCHAIN_DEVICE_TEST_PASS$' "$build_dir/result.log"
+if grep -q '^JARVIS_KEYCHAIN_DEVICE_TEST_FAIL' "$build_dir/result.log"; then exit 1; fi
